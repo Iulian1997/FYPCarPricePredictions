@@ -1,7 +1,11 @@
 {% extends 'base.html' %}
 {% load static %}
 
+{% block title %} | Home {% endblock %}
 {% block content %}
+<!-- Alerts -->
+<br>
+{% include 'partials/_alerts.html' %}
 <!-- Showcase -->
 <section id="showcase">
     <div class="container text-center">
@@ -19,8 +23,7 @@
                         <div class="form-row">
                             <div class="col-md-4 mb-3">
                                 <label class="sr-only">Car Feature 1</label>
-                                <input type="text" name="keywords" class="form-control"
-                                    placeholder="Car Feature 1">
+                                <input type="text" name="keywords" class="form-control" placeholder="Car Feature 1">
                             </div>
 
                             <div class="col-md-4 mb-3">
@@ -130,10 +133,6 @@
 </div>
 </div>
 </section>
-
-<!-- Alerts -->
-<br>
-{% include 'partials/_alerts.html' %}
 
 <section id="services" class="py-5 bg-secondary text-white">
     <div class="container">
