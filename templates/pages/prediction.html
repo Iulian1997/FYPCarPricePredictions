@@ -1,0 +1,420 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %} | Prediction {% endblock %}
+{% block content %}
+<section id="showcase-inner" class="py-5 text-white">
+    <div class="container">
+        <div class="row text-center">
+            <div class="col-md-12">
+                <h1 class="display-4">Predicted Price</h1>
+                <p class="lead">Predicted price using Machine Learning Algorithm and current market data.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Breadcrumb -->
+<section id="bc" class="mt-3">
+    <div class="container">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item">
+                    <a href="{% url 'index' %}">
+                        <i class="fas fa-home"></i> Home</a>
+                </li>
+                <li class="breadcrumb-item active"> Predicted Price</li>
+            </ol>
+        </nav>
+    </div>
+</section>
+
+<section id="prediction" class="py-4">
+    <div class="container">
+        <div class="row">
+            <div class="col">
+                <h2>Prediction</h2>
+                <br>
+                <div class="col">
+                    <form action="{% url 'dashboard' %}" method="POST">
+                        {% csrf_token %}
+                        <div class="input-group mb-3">
+                            <span class="input-group-text" id="basic-addon1"><i class="fas fa-car"></i></span>
+                            <div class="col-10 mx-auto">
+                                <input type="text" class="form-control" placeholder="{{make}}" aria-label="Make"
+                                readonly>
+                                <input type="hidden" value="{{ make }}" name="make">
+                            </div>
+                        </div>
+
+                        <div class="input-group mb-3">
+                            <span class="input-group-text" id="basic-addon1"><i class="fas fa-car-side"></i></span>
+                            <div class="col-10 mx-auto">
+                                <input type="text" class="form-control" placeholder="{{ model }}" aria-label="Model"
+                                readonly>
+                                <input type="hidden" value="{{ model }}" name="model">
+                            </div>
+                        </div>
+
+                        <div class="input-group mb-3">
+                            <span class="input-group-text" id="basic-addon1"><i class="fas fa-calendar-alt"></i></span>
+                            <div class="col-10 mx-auto">
+                                <input type="text" class="form-control" placeholder="Year: {{year}}" value="{{ year }}"
+                                    name="year" aria-label="Model" readonly>
+                                <input type="hidden" value="{{ year }}" name="year">
+                            </div>
+                        </div>
+
+                        <div class="input-group mb-3">
+                            <span class="input-group-text" id="basic-addon1"><i class="fas fa-cogs"></i></span>
+                            <div class="col-10 mx-auto">
+                                <input type="text" class="form-control" placeholder="Transmission: {{transmission}}"
+                                    value="{{ transmission }}" name="transmission" data-toggle="tooltip" data-placement="right" title="Most popular transmission type selected based on Make, Model and Year." aria-label="Mileage" readonly>
+                                <input type="hidden" value="{{ transmission }}" name="transmission">
+                            </div>
+                        </div>
+
+                        <div class="input-group mb-3">
+                            <span class="input-group-text" id="basic-addon1"><i
+                                    class="fas fa-tachometer-alt"></i></span>
+                            <div class="col-10 mx-auto">
+                                <input type="text" class="form-control" placeholder="Mileage: {{mileage}}"
+                                    value="{{ mileage }}" name="mileage" data-toggle="tooltip" data-placement="right" title="Average mileage selected based on Make, Model and Year." aria-label="Mileage" readonly>
+                                <input type="hidden" value="{{ mileage }}" name="mileage">
+                            </div>
+                        </div>
+
+                        <div class="input-group mb-3">
+                            <span class="input-group-text" id="basic-addon1"><i
+                                    class="fas fa-money-bill-alt"></i></span>
+                            <div class="col-10 mx-auto">
+                                <input type="text" class="form-control" placeholder="Tax: {{tax}}" aria-label="Tax"
+                                    value="£{{ tax }}" name="tax" data-toggle="tooltip" data-placement="right" title="Most popular tax bracket selected based on Make, Model and Year." readonly>
+                                <input type="hidden" value="{{ tax }}" name="tax">
+                            </div>
+                        </div>
+
+                        <div class="input-group mb-3">
+                            <span class="input-group-text" id="basic-addon1"><i class="fas fa-road"></i></span>
+                            <div class="col-10 mx-auto">
+                                <input type="text" class="form-control" placeholder="MPG: {{mpg}}" aria-label="mpg"
+                                    value="{{ mpg }}" name="mpg" data-toggle="tooltip" data-placement="right" title="Average MPG selected based on Make, Model and Year." readonly>
+                                <input type="hidden" value="{{ mpg }}" name="mpg">
+                            </div>
+                        </div>
+
+                        <div class="input-group mb-3">
+                            <span class="input-group-text" id="basic-addon1"><i class="fas fa-gas-pump"></i></span>
+                            <div class="col-10 mx-auto">
+                                <input type="text" class="form-control" placeholder="Engine Size: {{engine_size}}"
+                                    value="{{ engine_size }}" name="engine_size" data-toggle="tooltip" data-placement="right" title="Most popular engine size selected based on Make, Model and Year." aria-label="Engine Size" readonly>
+                                <input type="hidden" value="{{ engine_size }}" name="engine_size">
+
+                            </div>
+                        </div>
+                        <div class="input-group mb-3 row justify-content-center">
+                            <input type="hidden" name="price" id="price" value="{{ price }}" name="price">
+                            <h2>Price: £{{price}} | €{{ eurPrice }}</h2>
+                        </div>
+                        <button class="btn btn-secondary col-12 mx-auto" type="submit">Add to Dashboard</button>
+                </div>
+                </form>
+            </div>
+            <div class="col">
+                <div id="my_dataviz">
+                    <h4 class="text-center">Price Per Year</h4>
+                </div>
+                <div>
+                    <h4 class="text-center">Manual Transmission vs Automatic Transmission</h4>
+                    <svg id="my_dataviz_legend" height=70 width=450></svg>
+                </div>
+                <div id="my_dataviz2">
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script src="https://d3js.org/d3.v4.js"></script>
+
+<script>
+
+function displayBarChart(){
+    var dataList = []
+    var years = {{ year_range| safe }}
+    var prices = {{ list_prices| safe}}
+
+    for (x in years) {
+        var newRecord = {
+            year: years[x],
+            price: prices[x]
+        }
+        dataList.push(newRecord)
+    }
+
+    data = dataList;
+
+    // set the dimensions and margins of the graph
+    var margin = { top: 30, right: 30, bottom: 70, left: 60 },
+        width = 460 - margin.left - margin.right,
+        height = 400 - margin.top - margin.bottom;
+    // append the svg object to the body of the page
+    var svg = d3.select("#my_dataviz")
+        .append("svg")
+        .attr("width", width + margin.left + margin.right)
+        .attr("height", height + margin.top + margin.bottom)
+        .append("g")
+        .attr("transform",
+            "translate(" + margin.left + "," + margin.top + ")");
+
+
+    // X axis
+    var x = d3.scaleBand()
+        .range([0, width])
+        .domain(data.map(function (d) { return d.year; }))
+        .padding(0.2);
+    svg.append("g")
+        .attr("transform", "translate(0," + height + ")")
+        .call(d3.axisBottom(x))
+        .selectAll("text")
+        .style("text-anchor", "end")
+
+    svg.append("text")
+        .attr("transform",
+            "translate(" + (width / 2) + " ," + (height + margin.top + 20) + ")")
+        .style("text-anchor", "middle")
+        .text("Car Year");
+
+    // Add Y axis
+    var y = d3.scaleLinear()
+        .domain([0, d3.max(data, function (d) { return +d.price; })])
+        .range([height, 0]);
+    svg.append("g")
+        .call(d3.axisLeft(y));
+
+    // text label for the y axis
+    svg.append("text")
+        .attr("transform", "rotate(-90)")
+        .attr("y", 0 - margin.left)
+        .attr("x", 0 - (height / 2))
+        .attr("dy", "1em")
+        .style("text-anchor", "middle")
+        .text("Price");
+
+    // Create a Tooltip
+    var Tooltip = d3.select("#my_dataviz")
+        .append("div")
+        .style("opacity", 0)
+        .attr("class", "tooltip")
+        .style("padding", "10px")
+        .style("border", "solid")
+        .style("border-width", "1px")
+        .style("border-radius", "4px")
+        .style("background-color", "white")
+
+    // Functions for when the user hovers, moves, leaves subgroup of the stacked chart
+    var mouseover = function (d) {
+        Tooltip
+            .style("opacity", 1)
+        d3.select(this)
+            .style("stroke", "black")
+            .style("opacity", 1)
+    }
+    var mousemove = function (d) {
+        var dataPrice = d.price;
+        var dataYear = d.year;
+        dataPrice = dataPrice.toFixed(2);
+
+        Tooltip
+            .html("Year: " + dataYear + "<br>" + "Price: £" + dataPrice)
+            .style("opacity", 1)
+            .style("left", (d3.mouse(this)[0] + 25) + "px")
+            .style("top", (d3.mouse(this)[1] - 50) + "px")
+            .style("color", "white")
+            .style("border", "none")
+            .style("background-color", "rgba(0, 0, 0, 0.5)")
+    }
+    var mouseleave = function (d) {
+        Tooltip
+            .style("opacity", 0)
+        d3.select(this)
+            .style("stroke", "none")
+    }
+
+    // Bars
+    svg.selectAll("mybar")
+        .data(data)
+        .enter()
+        .append("rect")
+        .attr("x", function (d) { return x(d.year); })
+        .attr("y", function (d) { return y(d.price); })
+        .attr("width", x.bandwidth())
+        .attr("height", function (d) { return height - y(d.price); })
+        .attr("fill", "#69b3a2")
+        .on("mouseover", mouseover)
+        .on("mousemove", mousemove)
+        .on("mouseleave", mouseleave)
+};
+
+displayBarChart();
+
+    var dataListTransmission = []
+    var years = {{ year_range| safe }}
+    var pricesMan = {{ list_price_man| safe}}
+    var pricesAuto = {{ list_pice_auto| safe}}
+
+    for (x in years) {
+        var newRecord = {
+            year: years[x],
+            priceMan: pricesMan[x],
+            priceAuto: pricesAuto[x]
+        }
+        dataListTransmission.push(newRecord)
+    }
+
+    data = dataListTransmission;
+    console.log(data);
+
+   // set the dimensions and margins of the graph
+    var margin = { top: 30, right: 30, bottom: 70, left: 60 },
+    width = 460 - margin.left - margin.right,
+    height = 400 - margin.top - margin.bottom;
+    // append the svg object to the body of the page
+    var svg2 = d3.select("#my_dataviz2")
+    .append("svg")
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom)
+    .append("g")
+    g = svg2.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+        var x0 = d3.scaleBand()
+            .rangeRound([0, width])
+            .paddingInner(0.1);
+
+        var x1 = d3.scaleBand()
+            .padding(0.05);
+
+        var y = d3.scaleLinear()
+            .rangeRound([height, 0]);
+
+        var z = d3.scaleOrdinal()
+            .range(["#69b3a2", "#10284e"]);
+
+        var keys = Object.keys(data[0]).slice(1);
+
+            // Create a Tooltip
+    var Tooltip2 = d3.select("#my_dataviz")
+    .append("div")
+    .style("opacity", 0)
+    .attr("class", "tooltip")
+    .style("padding", "10px")
+    .style("border", "solid")
+    .style("border-width", "1px")
+    .style("border-radius", "4px")
+    .style("background-color", "white")
+
+// Functions for when the user hovers, moves, leaves subgroup of the stacked chart
+var mouseover = function (d) {
+    Tooltip2
+        .style("opacity", 1)
+    d3.select(this)
+        .style("stroke", "black")
+        .style("opacity", 1)
+}
+var mousemove = function (d) {
+    var dataPrice = d.value;
+    dataPrice = dataPrice.toFixed(2);
+
+    Tooltip2
+        .html("Price: £" + dataPrice)
+        .style("opacity", 1)
+        .style("left", (d3.mouse(this)[0] + 150) + "px")
+        .style("top", (d3.mouse(this)[1] + 350) + "px")
+        .style("color", "white")
+        .style("border", "none")
+        .style("background-color", "rgba(0, 0, 0, 0.5)")
+}
+var mouseleave = function (d) {
+    Tooltip2
+        .style("opacity", 0)
+    d3.select(this)
+        .style("stroke", "none")
+}
+
+        x0.domain(data.map(function (d) { return d.year; }));
+        x1.domain(keys).rangeRound([0, x0.bandwidth()]);
+        y.domain([0, d3.max(data, function (d) { return d3.max(keys, function (key) { return d[key]; }); })]).nice();
+
+
+        g.append("g")
+            .selectAll("g")
+            .data(data)
+            .enter().append("g")
+            .attr("transform", function (d) { return "translate(" + x0(d.year) + ",0)"; })
+            .selectAll("rect")
+            .data(function (d) { 
+            return keys.map(function (key) { 
+            	return { key: key, value: d[key] }; 
+             	}); 
+             })
+            .enter().append("rect")
+            .attr("x", function (d) { return x1(d.key); })
+            .attr("y", function (d) { return y(d.value); })
+            .attr("width", x1.bandwidth())
+            .attr("height", function (d) { return height - y(d.value); })
+            .attr("fill", function (d) { return z(d.key); })
+            .on("mouseover", mouseover)
+            .on("mousemove", mousemove)
+            .on("mouseleave", mouseleave);
+
+            g.append("text")
+            .attr("transform",
+                "translate(" + (width / 2) + " ," + (height + margin.top + 20) + ")")
+            .style("text-anchor", "middle")
+            .text("Car Year");
+
+        g.append("g")
+            .attr("class", "axis")
+            .attr("transform", "translate(0," + height + ")")
+            .call(d3.axisBottom(x0));
+
+        g.append("g")
+            .attr("class", "axis")
+            .call(d3.axisLeft(y).ticks(null, "s"))
+            .append("text")
+            .attr("fill", "#000")
+            .attr("font-weight", "bold")
+            .attr("text-anchor", "start")
+
+        g.append("text")
+            .attr("transform", "rotate(-90)")
+            .attr("y", 0 - margin.left)
+            .attr("x", 0 - (height / 2))
+            .attr("dy", "1em")
+            .style("text-anchor", "middle")
+            .text("Price");
+
+                // select the svg area
+                var svg_legend = d3.select("#my_dataviz_legend")
+
+                // Legend for the goal scorers
+                svg_legend.append("circle").attr("cx", 50).attr("cy", 45).attr("r", 12).style("fill", "#69b3a2")
+                svg_legend.append("circle").attr("cx", 220).attr("cy", 45).attr("r", 12).style("fill", "#10284e")
+                svg_legend.append("text").attr("x", 70).attr("y", 45).text("Manual").attr("alignment-baseline", "middle")
+                svg_legend.append("text").attr("x", 240).attr("y", 45).text("Automatic").attr("alignment-baseline", "middle")
+
+</script>
+
+<script>
+    $(document).ready(function(){
+      $('[data-toggle="tooltip"]').tooltip();   
+    });
+    </script>
+
+<style>
+    .tooltip {
+        position: absolute;
+    }
+</style>
+
+{% endblock %}
